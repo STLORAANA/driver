@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, redirect, session, url_for, flash
+app = Flask(__name__)
 from datetime import datetime, date
 import csv, os
 
 from user import USERS, RATE_PER_PACKAGE
 
-app = Flask(__name__)
+
 app.secret_key = 'change-this-secret-key'
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
@@ -13,6 +14,7 @@ if not os.path.exists(DATA_DIR):
 
 def get_csv_path(username):
     return os.path.join(DATA_DIR, f"{username}.csv")
+
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -269,4 +271,3 @@ if __name__ == '__main__':
     # You can choose any available port, for example, 8000, 8080, or 5001
     # For this example, let's use port 8000
     app.run(debug=True, host='0.0.0.0', port=8000)
-    
