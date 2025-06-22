@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Delivery Entry</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .container { background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 80%; max-width: 500px; text-align: center; }
+        h1 { color: #333; margin-bottom: 25px; }
+        .flash-messages { margin-bottom: 20px; width: 100%; }
+        .flash-messages li { list-style: none; padding: 10px; margin-bottom: 5px; border-radius: 4px; font-weight: bold; }
+        .flash-messages li.error { background-color: #ffe0e0; color: #d32f2f; border: 1px solid #d32f2f; }
+        .flash-messages li.success { background-color: #e8f5e9; color: #388e3c; border: 1px solid #388e3c; }
+        form div { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input[type="text"], input[type="number"], input[type="date"], select { width: calc(100% - 22px); padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; }
+        input[type="submit"] { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; width: 100%; transition: background-color 0.3s ease; margin-top: 10px; }
+        input[type="submit"]:hover { background-color: #218838; }
+        .back-button { display: inline-block; margin-top: 20px; padding: 10px 15px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px; transition: background-color 0.3s ease; }
+        .back-button:hover { background-color: #5a6268; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add My Delivery Entry</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for category, message in messages %}
+                        <li class="{{ category if category == 'error' else 'success' }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        <form method="POST">
+            <div>
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" value="{{ current_date }}" required>
+            </div>
+            <div>
+                <label for="route">Route:</label>
+                <select id="route" name="route" required>
+                    <option value="">Select Route</option>
+                    <option value="L1">L1</option>
+                    <option value="L2">L2</option>
+                    <option value="L4">L4</option>
+                    <option value="L6">L6</option>
+                </select>
+            </div>
+            <div>
+                <label for="assigned">Assigned Packages:</label>
+                <input type="number" id="assigned" name="assigned" min="0" required>
+            </div>
+            <div>
+                <label for="delivered">Delivered Packages:</label>
+                <input type="number" id="delivered" name="delivered" min="0" required>
+            </div>
+            <div>
+                <label for="returns">Returned/Failed Packages:</label>
+                <input type="number" id="returns" name="returns" min="0" required>
+            </div>
+            <div>
+                <label for="main_id">Main Delivery ID:</label>
+                <input type="text" id="main_id" name="main_id" required>
+            </div>
+            <div>
+                <label for="your_id">Your ID:</label>
+                <input type="text" id="your_id" name="your_id" required>
+            </div>
+            <div>
+                <label for="id_ranges">ID Range(s):</label>
+                <input type="text" id="id_ranges" name="id_ranges" placeholder="e.g., 100-150, 200-220">
+            </div>
+            <input type="submit" value="Add Entry">
+        </form>
+        <a href="{{ url_for('dashboard') }}" class="back-button">Back to Dashboard</a>
+    </div>
+</body>
+</html>

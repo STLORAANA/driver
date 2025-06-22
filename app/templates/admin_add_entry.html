@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin: Add Delivery Entry for Driver</title>
+    <style>
+        body { font-family: sans-serif; background-color: #e6f2ff; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .container { background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 15px rgba(0,0,0,0.2); width: 80%; max-width: 600px; text-align: center; }
+        h1 { color: #0056b3; margin-bottom: 25px; }
+        .flash-messages { margin-bottom: 20px; width: 100%; }
+        .flash-messages li { list-style: none; padding: 12px; margin-bottom: 8px; border-radius: 5px; font-weight: bold; }
+        .flash-messages li.error { background-color: #ffe0e0; color: #d32f2f; border: 1px solid #d32f2f; }
+        .flash-messages li.success { background-color: #e8f5e9; color: #388e3c; border: 1px solid #388e3c; }
+        form div { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+        input[type="text"], input[type="number"], input[type="date"], select { width: calc(100% - 22px); padding: 10px; border: 1px solid #b3d9ff; border-radius: 4px; font-size: 16px; }
+        input[type="submit"] { background-color: #28a745; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; width: 100%; transition: background-color 0.3s ease; margin-top: 15px; }
+        input[type="submit"]:hover { background-color: #218838; }
+        .back-button { display: inline-block; margin-top: 25px; padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px; transition: background-color 0.3s ease; }
+        .back-button:hover { background-color: #5a6268; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin: Add Delivery Entry for a Driver</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for category, message in messages %}
+                        <li class="{{ category if category == 'error' else 'success' }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        <form method="POST">
+            <div>
+                <label for="target_username">Select Driver:</label>
+                <select id="target_username" name="target_username" required>
+                    <option value="">-- Select a Driver --</option>
+                    {% for user_name in users %}
+                        <option value="{{ user_name }}">{{ user_name.capitalize() }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" value="{{ current_date }}" required>
+            </div>
+            <div>
+                <label for="route">Route:</label>
+                <select id="route" name="route" required>
+                    <option value="">Select Route</option>
+                    <option value="L1">L1</option>
+                    <option value="L2">L2</option>
+                    <option value="L4">L4</option>
+                    <option value="L6">L6</option>
+                </select>
+            </div>
+            <div>
+                <label for="assigned">Assigned Packages:</label>
+                <input type="number" id="assigned" name="assigned" min="0" required>
+            </div>
+            <div>
+                <label for="delivered">Delivered Packages:</label>
+                <input type="number" id="delivered" name="delivered" min="0" required>
+            </div>
+            <div>
+                <label for="returns">Returned/Failed Packages:</label>
+                <input type="number" id="returns" name="returns" min="0" required>
+            </div>
+            <div>
+                <label for="main_id">Main Delivery ID:</label>
+                <input type="text" id="main_id" name="main_id" required>
+            </div>
+            <div>
+                <label for="your_id">Your ID:</label>
+                <input type="text" id="your_id" name="your_id" required>
+            </div>
+            <div>
+                <label for="id_ranges">ID Range(s):</label>
+                <input type="text" id="id_ranges" name="id_ranges" placeholder="e.g., 100-150, 200-220">
+            </div>
+            <input type="submit" value="Add Entry for Driver">
+        </form>
+      <a href="{{ url_for('dashboard') }}" class="back-button">Back to Admin Dashboard</a>
+    </div>
+</body>
+</html>

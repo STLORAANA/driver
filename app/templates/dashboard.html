@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px; /* Slightly wider for options */
+            text-align: center;
+        }
+        h2 {
+            color: #007bff;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Space between links */
+            margin-bottom: 30px;
+        }
+        .options a, .logout-link a {
+            display: block; /* Make links take full width */
+            padding: 15px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+        .options a {
+            background-color: #28a745; /* Green for main actions */
+            color: white;
+            box-shadow: 0 2px 5px rgba(40, 167, 69, 0.3); /* Subtle shadow */
+        }
+        .options a:hover {
+            background-color: #218838; /* Darker green on hover */
+            transform: translateY(-3px); /* Lift effect */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); /* More prominent shadow */
+        }
+        .logout-link {
+            margin-top: 30px;
+        }
+        .logout-link a {
+            background-color: #dc3545; /* Red for logout */
+            color: white;
+            box-shadow: 0 2px 5px rgba(220, 53, 69, 0.3);
+        }
+        .logout-link a:hover {
+            background-color: #c82333; /* Darker red on hover */
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Optional: Styling for flash messages if they are added later */
+        .flash-messages {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        .flash-messages li {
+            background-color: #ffe0e0; /* Light red for errors */
+            color: #d32f2f; /* Dark red text */
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #d32f2f;
+            font-size: 0.95em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome, {{ user.capitalize() }}!</h2> {# Capitalize for better presentation #}
+
+        {# You might want to add flash messages here if they can appear on the dashboard #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for category, message in messages %}
+                        <li class="{{ category if category == 'error' else 'success' }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <div class="options">
+            {% if admin %}
+              <a href="{{ url_for('admin_add_entry') }}">➕ Add Delivery Entry for a Driver</a>
+              <a href="{{ url_for('admin_salary_report', half='first') }}">📄 View All Drivers 1-15 Report</a>
+              <a href="{{ url_for('admin_salary_report', half='second') }}">📄 View All Drivers 16-End Report</a>
+              <a href="{{ url_for('admin_generate_all_summary_csv') }}">📥 Generate All Summary CSV</a>
+            {% else %}
+              <a href="{{ url_for('add_entry') }}">➕ Add My Entry</a>
+              <a href="{{ url_for('summary', half='first') }}">📄 View My 1-15 Pay</a>
+              <a href="{{ url_for('summary', half='second') }}">📄 View My 16-End Pay</a>
+            {% endif %}
+        </div>
+        <div class="logout-link">
+            <a href="{{ url_for('logout') }}">➡️ Logout</a>
+        </div>
+    </div>
+</body>
+</html>

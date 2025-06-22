@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Summary</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+            padding: 20px; /* Add some padding around the edges */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px; /* Wider for table content */
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h2 {
+            color: #007bff;
+            margin-bottom: 25px;
+            font-size: 2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        h2::before {
+            content: '📄'; /* Document emoji */
+            font-size: 1.2em;
+        }
+        h3 {
+            color: #007bff;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        h3.route-totals::before {
+            content: '📊'; /* Bar chart emoji */
+            font-size: 1em;
+        }
+        h3.total-pay::before {
+            content: '💰'; /* Money bag emoji */
+            font-size: 1em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse; /* Removes double borders */
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden; /* Ensures border-radius applies to table */
+        }
+        th, td {
+            border: 1px solid #dee2e6; /* Light gray border */
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 0.95em;
+        }
+        th {
+            background-color: #e9ecef; /* Light gray header */
+            color: #495057;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa; /* Light stripe for even rows */
+        }
+        tr:hover {
+            background-color: #e2f0ff; /* Light blue on hover */
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+        ul li {
+            background-color: #e9f7ef; /* Light green background for list items */
+            border: 1px solid #d4edda;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            color: #155724;
+            font-size: 1em;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            background-color: #6c757d; /* Gray for back button */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 5px rgba(108, 117, 125, 0.3);
+        }
+        .back-button:hover {
+            background-color: #5a6268; /* Darker gray on hover */
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Delivery Summary ({{ '1–15' if half == 'first' else '16–end' }})</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Route</th>
+              <th>Delivered</th>
+              <th>Pay ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in rows %}
+              <tr>
+                <td>{{ r.date }}</td>
+                <td>{{ r.route }}</td>
+                <td>{{ r.delivered }}</td>
+                <td>{{ "%.2f" | format(r.pay) }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <h3 class="route-totals">Route Totals:</h3>
+        <ul>
+          {% for route, count in route_counts.items() %}
+            <li>{{ route }}: {{ count }} deliveries</li>
+          {% endfor %}
+        </ul>
+
+        <h3 class="total-pay">Total Pay: ${{ "%.2f" | format(total_pay) }}</h3>
+
+        {# Use url_for for better Flask practice #}
+        <a href="{{ url_for('dashboard') }}" class="back-button">← Back to Dashboard</a>
+    </div>
+</body>
+</html>

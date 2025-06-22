@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body { font-family: sans-serif; background-color: #e6f2ff; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .container { background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 15px rgba(0,0,0,0.2); width: 80%; max-width: 700px; text-align: center; }
+        h1 { color: #0056b3; margin-bottom: 25px; }
+        .welcome { font-size: 1.3em; color: #333; margin-bottom: 30px; }
+        .flash-messages { margin-bottom: 25px; width: 100%; }
+        .flash-messages li { list-style: none; padding: 12px; margin-bottom: 8px; border-radius: 5px; font-weight: bold; }
+        .flash-messages li.error { background-color: #ffe0e0; color: #d32f2f; border: 1px solid #d32f2f; }
+        .flash-messages li.success { background-color: #e8f5e9; color: #388e3c; border: 1px solid #388e3c; }
+        .options { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 600px) {
+            .options { grid-template-columns: 1fr 1fr; }
+        }
+        .options a { display: block; padding: 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 7px; transition: background-color 0.3s ease, transform 0.2s ease; font-size: 1.15em; font-weight: bold; }
+        .options a:hover { background-color: #0056b3; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .logout-link { margin-top: 40px; }
+        .logout-link a { color: #dc3545; text-decoration: none; font-weight: bold; font-size: 1.1em; }
+        .logout-link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <p class="welcome">Welcome, {{ user.capitalize() }}!</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for category, message in messages %}
+                        <li class="{{ category if category == 'error' else 'success' }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <div class="options">
+            <a href="{{ url_for('admin_add_entry') }}">➕ Add Delivery Entry for a Driver</a>
+            <a href="{{ url_for('admin_salary_report', half='first') }}">📄 View All Drivers 1-15 Report</a>
+            <a href="{{ url_for('admin_salary_report', half='second') }}">📄 View All Drivers 16-End Report</a>
+            <a href="{{ url_for('admin_generate_all_summary_csv') }}">📥 Generate All Summary CSV</a>
+        </div>
+        <div class="logout-link">
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>
