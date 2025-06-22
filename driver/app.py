@@ -3,7 +3,8 @@ app = Flask(__name__)
 from datetime import datetime, date
 import csv, os
 
-from user import USERS, RATE_PER_PACKAGE
+from driver.user import USERS, RATE_PER_PACKAGE
+
 
 
 app.secret_key = 'change-this-secret-key'
