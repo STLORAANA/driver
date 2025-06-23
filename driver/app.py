@@ -3,7 +3,7 @@ app = Flask(__name__)
 from datetime import datetime, date
 import csv, os
 
-from driver.user import USERS, RATE_PER_PACKAGE
+from user import USERS, RATE_PER_PACKAGE
 
 
 
@@ -140,6 +140,45 @@ def logout():
     return redirect(url_for('login'))
 
 # ------------------- ADMIN ROUTES -------------------
+@app.route('/admin/driver_details_by_date', methods=['GET', 'POST'])
+def driver_details_by_date():
+    if 'username' not in session or session['username'] != 'admin':
+        flash("🚫 Access denied.")
+        return redirect(url_for('dashboard'))
+
+    driver_data = []
+    selected_date = None
+
+    if request.method == 'POST':
+        selected_date = request.form.get('selected_date')
+        if selected_date:
+            for filename in os.listdir(DATA_DIR):
+                if filename.endswith(".csv"):
+                    username = filename[:-4]
+                    if username == 'admin' or username not in USERS:
+                        continue
+                    csv_path = get_csv_path(username)
+                    if not os.path.exists(csv_path):
+                        continue
+
+                    with open(csv_path, newline='') as f:
+                        reader = csv.DictReader(f)
+                        for row in reader:
+                            if row["Date"] == selected_date:
+                                driver_data.append({
+                                    "username": username,
+                                    "route": row["Route"],
+                                    "delivered": row["Delivered"],
+                                    "main_id": row["Main ID"],
+                                    "your_id": row["Your ID"],
+                                })
+
+            if not driver_data:
+                flash(f"❌ No data found for {selected_date}.")
+
+    return render_template('admin_driver_details_by_date.html',
+                           driver_data=driver_data,
+                           selected_date=selected_date)
 
 @app.route('/admin/add_entry', methods=['GET', 'POST'])
 def admin_add_entry():
@@ -167,7 +206,6 @@ def admin_add_entry():
 
     current_date = date.today().isoformat()
     return render_template("admin_add_entry.html", users=non_admin_users, current_date=current_date)
-
 
 @app.route('/admin/salary_report/<half>')
 def admin_salary_report(half):
@@ -197,10 +235,20 @@ def admin_salary_report(half):
                                 delivered = int(r["Delivered"])
                                 driver_pay = float(r["DriverPay($)"])
                                 profit = float(r["Profit($)"])
+                                route = r["Route"]
 
-                                summary_data.setdefault(username_from_file, {"delivered": 0, "pay": 0})
+                                if username_from_file not in summary_data:
+                                    summary_data[username_from_file] = {
+                                        "delivered": 0,
+                                        "pay": 0,
+                                        "routes": {}
+                                    }
+
                                 summary_data[username_from_file]["delivered"] += delivered
                                 summary_data[username_from_file]["pay"] += driver_pay
+                                summary_data[username_from_file]["routes"][route] = \
+                                    summary_data[username_from_file]["routes"].get(route, 0) + delivered
+
                                 total_company_pay += driver_pay
                                 total_company_profit += profit
                             except (ValueError, KeyError) as e:

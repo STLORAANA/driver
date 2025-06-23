@@ -1,0 +1,115 @@
+<!-- templates/admin_driver_details_by_date.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Driver Details by Date</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f8f9fa;
+        }
+
+        h2, h3 {
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="date"] {
+            padding: 6px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 6px 12px;
+            font-size: 16px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: white;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #343a40;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h2>📅 Driver Deliveries on a Specific Date</h2>
+
+    <form method="POST">
+        <label for="selected_date">Select Date:</label>
+        <input type="date" name="selected_date" required>
+        <button type="submit">View</button>
+    </form>
+
+    {% if selected_date %}
+        <h3>Results for {{ selected_date }}</h3>
+        {% if driver_data %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Driver</th>
+                        <th>Route</th>
+                        <th>Delivered</th>
+                        <th>Main ID</th>
+                        <th>Your ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in driver_data %}
+                    <tr>
+                        <td>{{ d.username }}</td>
+                        <td>{{ d.route }}</td>
+                        <td>{{ d.delivered }}</td>
+                        <td>{{ d.main_id }}</td>
+                        <td>{{ d.your_id }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No data found for that date.</p>
+        {% endif %}
+    {% endif %}
+
+    <a href="{{ url_for('dashboard') }}">🔙 Back to Dashboard</a>
+</body>
+</html>

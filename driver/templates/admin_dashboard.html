@@ -44,6 +44,8 @@
             <a href="{{ url_for('admin_salary_report', half='first') }}">📄 View All Drivers 1-15 Report</a>
             <a href="{{ url_for('admin_salary_report', half='second') }}">📄 View All Drivers 16-End Report</a>
             <a href="{{ url_for('admin_generate_all_summary_csv') }}">📥 Generate All Summary CSV</a>
+            <li><a href="{{ url_for('driver_details_by_date') }}">🔍 View Driver Details by Date</a></li>
+
         </div>
         <div class="logout-link">
             <a href="{{ url_for('logout') }}">Logout</a>
