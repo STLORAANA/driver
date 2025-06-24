@@ -3,7 +3,7 @@ app = Flask(__name__)
 from datetime import datetime, date
 import csv, os
 from flask import send_from_directory
-from user import USERS, RATE_PER_PACKAGE
+from driver.user import USERS, RATE_PER_PACKAGE
 
 
 
