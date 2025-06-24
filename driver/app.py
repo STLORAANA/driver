@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, redirect, session, url_for, flash
+from flask import Flask, render_template, request, redirect, send_file, session, url_for, flash
 app = Flask(__name__)
 from datetime import datetime, date
 import csv, os
-
-from driver.user import USERS, RATE_PER_PACKAGE
+from flask import send_from_directory
+from user import USERS, RATE_PER_PACKAGE
 
 
 
@@ -271,7 +271,7 @@ def admin_salary_report(half):
 @app.route('/admin/generate_all_summary_csv')
 def admin_generate_all_summary_csv():
     if 'username' not in session or session['username'] != 'admin':
-        flash("🚫 Access denied. Admin privileges required.")
+        flash("🚫 Access denied.")
         return redirect(url_for('dashboard'))
 
     all_rows = []
@@ -305,17 +305,27 @@ def admin_generate_all_summary_csv():
 
     if not all_rows:
         flash("❌ No driver data found to export.")
+        return redirect(url_for('dashboard'))
     else:
         all_rows.sort(key=lambda x: (datetime.strptime(x[0], "%Y-%m-%d"), x[1]))
-        output_csv_path = os.path.join(DATA_DIR, "all_summary.csv")
+        output_csv_filename = "all_summary.csv"
+        output_csv_path = os.path.join(DATA_DIR, output_csv_filename)
 
         with open(output_csv_path, "w", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["Date", "Driver", "Route", "Delivered", "DriverPay($)", "Profit($)"])
             writer.writerows(all_rows)
-        flash("✅ 'all_summary.csv' created and saved to the 'data' folder!")
 
-    return redirect(url_for('dashboard')) # Corrected: Changed 'admin_dashboard' to 'dashboard'
+        # Directly send the file as an attachment for download
+        return send_file(output_csv_path, as_attachment=True, download_name=output_csv_filename)
+
+@app.route('/data/<path:filename>')
+def download_file(filename):
+    if 'username' not in session or session['username'] != 'admin':
+        flash("🚫 Access denied.")
+        return redirect(url_for('dashboard'))
+    return send_from_directory(DATA_DIR, filename, as_attachment=False)
+
 if __name__ == '__main__':
     # You can choose any available port, for example, 8000, 8080, or 5001
     # For this example, let's use port 8000
